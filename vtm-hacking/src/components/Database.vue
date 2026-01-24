@@ -64,7 +64,7 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { categories } from './../data/categories'
-import type { Category, FileEntry } from './../data/categories'
+import type { Category } from './../data/categories'
 import type { User } from '../types/types'
 
 /* ===== USER CONTEXT ===== */

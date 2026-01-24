@@ -40,7 +40,6 @@ const logged = ref<number | null>(null)
 
 const stage = ref<Stage>('username')
 const username = ref('')
-const password = ref('')
 const input = ref('')
 const error = ref(false)
 const errorText = ref('')
@@ -76,7 +75,7 @@ const generateNoise = () => {
 }
 
 const maskedUsername = computed(() => '*'.repeat(username.value.length))
-const maskedPassword = computed(() => '*'.repeat(password.value.length))
+//const maskedPassword = computed(() => '*'.repeat(password.value.length))
 const maskedInput = computed(() => '*'.repeat(input.value.length))
 
 const emit = defineEmits<{
