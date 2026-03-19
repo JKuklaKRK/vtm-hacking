@@ -29,7 +29,7 @@
             v-for="(file, i) in currentCategory!.files"
             :key="file.fileId"
             :class="['row', { active: i === index }]">
-            {{ file.encryptedName }}
+            {{ props.user.accessTo.indexOf(file.fileId) > -1 ? file.filename : file.encryptedName }}
         </div>
 
         <!-- LOGOUT -->
@@ -46,6 +46,8 @@
     <div class="right">
       <div v-if="view === 'content'" class="content">
         {{ currentContent }}
+        <img v-if="img != ''" :src="`/vtm-hacking/img/${img}`"/>
+        <span v-else>{{img}}</span>
       </div>
 
       <div v-if="error" class="error">
@@ -70,7 +72,7 @@ import type { User } from '../types/types'
 /* ===== USER CONTEXT ===== */
 const props = defineProps<{ user: User }>()
 const emit = defineEmits<{ (e: 'logout'): void,
-    (e: 'newAccess', payload: { catId: number|undefined; fileId: number }): void
+    (e: 'newAccess', fileId: number ): void
  }>()
 
 
@@ -80,6 +82,7 @@ const view = ref<View>('categories')
 const index = ref(0)
 const currentCategory = ref<Category | null>(null)
 const currentContent = ref('')
+const img = ref('')
 const error = ref(false)
 const insult = ref('')
 const nickname = ref('')
@@ -280,10 +283,15 @@ const handleKey = (e: KeyboardEvent) => {
       const file = currentCategory.value?.files[index.value]
       if (!file) return
 
-      if (props.user.accessTo.length < props.user.maxAccess) {
+      if (props.user.accessTo.indexOf(file.fileId) > -1) {
         currentContent.value = file.content
+        img.value = file.img ?? ''
         view.value = 'content'
-        emit('newAccess', { catId: currentCategory.value?.catId, fileId: file.fileId })
+      } else if (props.user.accessTo.length < props.user.maxAccess) {
+        currentContent.value = file.content
+        img.value = file.img ?? ''
+        view.value = 'content'
+        emit('newAccess', file.fileId )
       } else {
         error.value = true
         nickname.value = randomNick()
@@ -375,7 +383,16 @@ onUnmounted(() => window.removeEventListener('keydown', handleKey))
 }
 
 .content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 50px 0;
   white-space: pre-wrap;
+}
+
+.content img {
+  max-height: 50vh;
+  width: auto;
 }
 
 .error {
